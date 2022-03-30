@@ -18,11 +18,13 @@
     "require": {
         "php": "^7.3|^8.0",
         "guzzlehttp/guzzle": "^7.4",
+        "illuminate/database": "^8.40",
         "illuminate/http": "^8.0",
         "laminas/laminas-text": "^2.8",
         "laravel-zero/framework": "^8.8"
     },
     "require-dev": {
+        "fakerphp/faker": "^1.9.1",
         "mockery/mockery": "^1.4.3",
         "pestphp/pest": "^1.3"
     },
