@@ -4,6 +4,7 @@ namespace App\Commands;
 
 use DB;
 use LaravelZero\Framework\Commands\Command;
+use Illuminate\Support\Str;
 
 class BbCommand extends Command
 {
@@ -71,10 +72,10 @@ class BbCommand extends Command
                 );
                 if ($affected) {
                     $this->info('edit done');
-                    exit;
                 } else {
                     $this->error('edit ooops!');
                 }
+                exit;
             }
             $inSql = 'INSERT INTO wp_comments
             (comment_post_ID,
@@ -112,6 +113,7 @@ class BbCommand extends Command
 
     private function transContent($content)
     {
-        return str_replace(PHP_EOL, '↙ ', $content); //换行符替换为浮号 ↙
+        $str = str_replace(PHP_EOL, '↙ ', $content); //换行符替换为符号 ↙
+        return Str::limit($str, config('bb.length'));
     }
 }

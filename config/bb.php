@@ -20,4 +20,6 @@ return [
     'email' => env('BB_EMAIL', ''),
 
     'num' => env('BB_NUM', 10),
+
+    'length' => env('BB_LENGTH', 120), //最多显示几个字, 计算宽度的时候，中文算2个长度，英文算1个长度
 ];
