@@ -14,7 +14,7 @@ class BbCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'bb {content?} {--p}  {--e}';
+    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=}';
 
     /**
      * The description of the command.
@@ -42,6 +42,21 @@ class BbCommand extends Command
             $this->error('config bb.post_id is null!');
             exit;
         }
+
+        if ($this->option('id')) {
+            $content = DB::table('wp_comments')->where('comment_ID', $this->option('id'))->value('comment_content');
+            if ($content)
+                $this->line($content);
+            else
+                $this->error('Null');
+            exit;
+        }
+
+        if ($this->option('c')) {
+            $count = DB::table('wp_posts')->where('ID', $comment_post_ID)->value('comment_count');
+            $this->info('当前一共有' . $count . '条说说');
+            exit;
+        }
         $comment_author = config('bb.author');
         $user_id = config('bb.user_id');
         $comment_author_email = config('bb.email');
@@ -49,19 +64,21 @@ class BbCommand extends Command
         if (!$content) {
             //查询评论
 
-            $comments = DB::table('wp_comments')->select('comment_content', 'comment_date')
+            $comments = DB::table('wp_comments')->select('comment_ID', 'comment_content', 'comment_date')
                 ->where('comment_post_ID', $comment_post_ID)
                 ->orderBy('comment_ID', 'DESC')
                 ->limit(config('bb.num'))
                 ->get()
                 ->map(function ($row) {
                     return [
-                        $this->transContent($row->comment_content), $row->comment_date,
+                        $this->transContent($row->comment_content),
+                        $row->comment_ID,
+                        $row->comment_date,
                     ];
                 });
 
             //dd($comments);
-            $headers = ['乱弹', '时间'];
+            $headers = ['乱弹', 'ID', '时间'];
             $this->table($headers, $comments); //borderless, 'compact'
         } else {
             if ($this->option('e')) {
