@@ -5,6 +5,7 @@ namespace App\Commands;
 use DB;
 use LaravelZero\Framework\Commands\Command;
 use Illuminate\Support\Str;
+use App\Handlers\SlugTranslateHandler;
 
 class BbCommand extends Command
 {
@@ -14,7 +15,7 @@ class BbCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=}';
+    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=} {--t}';
 
     /**
      * The description of the command.
@@ -82,6 +83,9 @@ class BbCommand extends Command
             $this->table($headers, $comments); //borderless, 'compact'
         } else {
             if ($this->option('e')) {
+                if ($this->option('t')) {
+                    $content = $this->translateContent($content);
+                }
                 //修改上一条
                 $affected = DB::update(
                     'UPDATE wp_comments SET comment_content = ? WHERE comment_post_ID = ? AND comment_approved = 1 ORDER BY comment_id DESC LIMIT 1',
@@ -93,6 +97,10 @@ class BbCommand extends Command
                     $this->error('edit ooops!');
                 }
                 exit;
+            }
+
+            if ($this->option('t')) {
+                $content = $this->translateContent($content);
             }
             $inSql = 'INSERT INTO wp_comments
             (comment_post_ID,
@@ -132,5 +140,11 @@ class BbCommand extends Command
     {
         $str = str_replace(PHP_EOL, '↙ ', $content); //换行符替换为符号 ↙
         return Str::limit($str, config('bb.length'));
+    }
+
+    private function translateContent($content)
+    {
+        $trans = app(SlugTranslateHandler::class)->translate($content);
+        return $content . PHP_EOL . $trans;
     }
 }
