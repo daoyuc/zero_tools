@@ -45,7 +45,14 @@ class BbCommand extends Command
         }
 
         if ($this->option('id')) {
-            $content = DB::table('wp_comments')->where('comment_ID', $this->option('id'))->value('comment_content');
+            if ($this->option('id') == -1) {
+                $content = DB::table('wp_comments')
+                    ->where('comment_post_ID', $comment_post_ID)
+                    ->orderBy('comment_ID', 'desc')->first();
+                $content = $content->comment_content ?: '';
+            } else {
+                $content = DB::table('wp_comments')->where('comment_ID', $this->option('id'))->value('comment_content');
+            }
             if ($content)
                 $this->line($content);
             else
@@ -93,6 +100,7 @@ class BbCommand extends Command
                 );
                 if ($affected) {
                     $this->info('edit done');
+                    $this->line($content);
                 } else {
                     $this->error('edit ooops!');
                 }
@@ -124,6 +132,7 @@ class BbCommand extends Command
             ]);
             if ($newId) {
                 $this->info('done');
+                $this->line($content);
                 DB::update(
                     'UPDATE wp_posts SET comment_count =(SELECT COUNT(*) FROM wp_comments WHERE comment_post_ID = ? AND comment_approved = 1) WHERE ID = ?',
                     [$comment_post_ID, $comment_post_ID]
