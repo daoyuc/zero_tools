@@ -23,7 +23,23 @@ Laravel Zero was created by, and is maintained by [Nuno Maduro](https://github.c
 
 # zero_tools
 
-零工
+零工(一个用 PHP 写的命令行工具合集)
+
+### 当前功能
+
+1. **force** “原力与你同在” 命令随机展示一条星球大战电影里的台词。
+
+---
+
+2. **bb** “发布 wordpress 站点评论” 需要配置对应 wp 站点的数据连接和待评论文章信息，作者信息。（demo: 🔗[https://blog.phpf5.com/bb](https://blog.phpf5.com/bb) ）
+    - 不带参数 （显示最新的 10 条评论）
+    - 引号包裹的字符串 （作为评论内容）
+    - --e 编辑模式（修改最后一条评论）
+    - --c 计数（返回对应文章一共有多少条评论）
+    - --id[=ID] 返回特定 ID 的评论内容，--id=-1 输出最后一条评论内容
+    - --t 内容调用百度翻译, 换行附加在原本内容后面
+
+---
 
 ## Documentation
 
