@@ -91,9 +91,15 @@ class BbCommand extends Command
                     ];
                 });
 
-            //dd($comments);
+            //行间插入空行
+            $showComments = [];
+            foreach ($comments as $key => $item) {
+                $showComments[] = $item;
+                $showComments[] = ['', '', '',];
+            }
+
             $headers = [$title, 'ID', '时间'];
-            $this->table($headers, $comments); //borderless, 'compact'
+            $this->table($headers, $showComments); //borderless, 'compact'
         } else {
             if ($this->option('e')) {
                 if ($this->option('t')) {
