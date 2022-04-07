@@ -15,7 +15,7 @@ class BbCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=} {--t}';
+    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=} {--t} {--q=}';
 
     /**
      * The description of the command.
@@ -71,9 +71,15 @@ class BbCommand extends Command
 
         if (!$content) {
             //查询评论
+            $where = [['comment_post_ID', $comment_post_ID]];
+            $title = '乱弹';
+            if ($this->option('q')) {
+                $where[] = ['comment_content', 'like', '%' . $this->option('q') . '%'];
+                $title = '包含"' . $this->option('q') . '"的' . $title;
+            }
 
             $comments = DB::table('wp_comments')->select('comment_ID', 'comment_content', 'comment_date')
-                ->where('comment_post_ID', $comment_post_ID)
+                ->where($where)
                 ->orderBy('comment_ID', 'DESC')
                 ->limit(config('bb.num'))
                 ->get()
@@ -86,7 +92,7 @@ class BbCommand extends Command
                 });
 
             //dd($comments);
-            $headers = ['乱弹', 'ID', '时间'];
+            $headers = [$title, 'ID', '时间'];
             $this->table($headers, $comments); //borderless, 'compact'
         } else {
             if ($this->option('e')) {
