@@ -165,7 +165,12 @@ class BbCommand extends Command
 
     private function translateContent($content)
     {
-        $trans = app(SlugTranslateHandler::class)->translate($content);
+        //判断字符串语言组成
+        if (stringType($content) == '1') {
+            $trans = app(SlugTranslateHandler::class)->translate($content, 'en', 'zh');
+        } else {
+            $trans = app(SlugTranslateHandler::class)->translate($content);
+        }
         return $content . PHP_EOL . $trans;
     }
 }

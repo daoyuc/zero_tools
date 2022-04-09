@@ -8,7 +8,7 @@ use Overtrue\Pinyin\Pinyin;
 
 class SlugTranslateHandler
 {
-    public function translate($text)
+    public function translate($text, $from = 'zh', $to = 'en')
     {
         // 实例化 HTTP 客户端
         $http = new Client();
@@ -32,8 +32,8 @@ class SlugTranslateHandler
         // 构建请求参数
         $query = http_build_query([
             'q' => $text,
-            'from' => 'zh',
-            'to' => 'en',
+            'from' => $from,
+            'to' => $to,
             'appid' => $appid,
             'salt' => $salt,
             'sign' => $sign,
