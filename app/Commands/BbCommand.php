@@ -7,6 +7,7 @@ use LaravelZero\Framework\Commands\Command;
 use Illuminate\Support\Str;
 use App\Handlers\SlugTranslateHandler;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 
 Carbon::setLocale(config('app.locale'));
 
@@ -18,7 +19,7 @@ class BbCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=} {--t} {--q=}';
+    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=} {--t} {--q=} {--f}';
 
     /**
      * The description of the command.
@@ -161,6 +162,18 @@ class BbCommand extends Command
                     'UPDATE wp_posts SET comment_count =(SELECT COUNT(*) FROM wp_comments WHERE comment_post_ID = ? AND comment_approved = 1) WHERE ID = ?',
                     [$comment_post_ID, $comment_post_ID]
                 );
+
+                // 判断是否需要同步到别的平台
+                if ($this->option('f') && config('bb.flomo')) {
+                    $response = Http::withoutVerifying()->post(config('bb.flomo'), [
+                        'content' => '#bb ' . $content,
+                    ]);
+                    if ($response->successful()) {
+                        $this->info('flomo ✔');
+                    } else {
+                        $this->error('flomo ❌, please check your FLOMO env');
+                    }
+                }
             } else {
                 $this->error('ooops!');
             }

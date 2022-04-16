@@ -24,4 +24,6 @@ return [
     'length' => env('BB_LENGTH', 120), //最多显示几个字, 计算宽度的时候，中文算2个长度，英文算1个长度
 
     'style' => env('BB_STYLE', 'table'), //内容显示版式， 支持 table 表格 和 line 行间
+
+    'flomo' => env('FLOMO', ''), //flomo记录 API
 ];
