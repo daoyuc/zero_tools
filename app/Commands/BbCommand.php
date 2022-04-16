@@ -6,6 +6,9 @@ use DB;
 use LaravelZero\Framework\Commands\Command;
 use Illuminate\Support\Str;
 use App\Handlers\SlugTranslateHandler;
+use Carbon\Carbon;
+
+Carbon::setLocale(config('app.locale'));
 
 class BbCommand extends Command
 {
@@ -87,19 +90,28 @@ class BbCommand extends Command
                     return [
                         $this->transContent($row->comment_content),
                         $row->comment_ID,
-                        $row->comment_date,
+                        Carbon::createFromTimeString($row->comment_date)->diffForHumans(),
                     ];
                 });
 
-            //行间插入空行
-            $showComments = [];
-            foreach ($comments as $key => $item) {
-                $showComments[] = $item;
-                $showComments[] = ['', '', '',];
-            }
+            $style = config('bb.style');
+            if ($style == 'table') {
 
-            $headers = [$title, 'ID', '时间'];
-            $this->table($headers, $showComments); //borderless, 'compact'
+                //行间插入空行
+                $showComments = [];
+                foreach ($comments as $key => $item) {
+                    $showComments[] = $item;
+                    $showComments[] = ['', '', '',];
+                }
+
+                $headers = [$title, 'ID', '时间'];
+                $this->table($headers, $showComments); //borderless, 'compact'
+            } else {
+                foreach ($comments as $value) {
+                    $this->line('<info>' . $value[1] . '</info>  ' . $value[0] . ' <question>(' . $value[2] . ')</question>');
+                    $this->line('');
+                }
+            }
         } else {
             if ($this->option('e')) {
                 if ($this->option('t')) {
