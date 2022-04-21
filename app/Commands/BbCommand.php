@@ -19,7 +19,7 @@ class BbCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=} {--t} {--q=} {--f}';
+    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=} {--t} {--q=} {--f} {--et}';
 
     /**
      * The description of the command.
@@ -74,6 +74,30 @@ class BbCommand extends Command
         $comment_author_email = config('bb.email');
 
         if (!$content) {
+
+            //修改上一条，附加翻译
+            if ($this->option('et')) {
+                $content = DB::table('wp_comments')
+                    ->where('comment_post_ID', $comment_post_ID)
+                    ->orderBy('comment_ID', 'desc')->first();
+                $content = $content->comment_content ?: '';
+
+                $content = $this->translateContent($content);
+
+                //修改上一条
+                $affected = DB::update(
+                    'UPDATE wp_comments SET comment_content = ? WHERE comment_post_ID = ? AND comment_approved = 1 ORDER BY comment_id DESC LIMIT 1',
+                    [$content, $comment_post_ID]
+                );
+                if ($affected) {
+                    $this->info('edit and trans done');
+                    $this->line($content);
+                } else {
+                    $this->error('edit and trans ooops!');
+                }
+                exit;
+            }
+
             //查询评论
             $where = [['comment_post_ID', $comment_post_ID]];
             $title = '乱弹';
