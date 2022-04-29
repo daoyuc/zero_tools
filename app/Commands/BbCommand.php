@@ -86,7 +86,7 @@ class BbCommand extends Command
 
                 //修改上一条
                 $affected = DB::update(
-                    'UPDATE wp_comments SET comment_content = ? WHERE comment_post_ID = ? AND comment_approved = 1 ORDER BY comment_id DESC LIMIT 1',
+                    'UPDATE wp_comments SET comment_content = ? WHERE comment_post_ID = ? AND comment_approved = "1" ORDER BY comment_id DESC LIMIT 1',
                     [$content, $comment_post_ID]
                 );
                 if ($affected) {
@@ -99,7 +99,7 @@ class BbCommand extends Command
             }
 
             //查询评论
-            $where = [['comment_post_ID', $comment_post_ID]];
+            $where = [['comment_post_ID', $comment_post_ID],['comment_approved', '1']];
             $title = '乱弹';
             if ($this->option('q')) {
                 $where[] = ['comment_content', 'like', '%' . $this->option('q') . '%'];
@@ -144,7 +144,7 @@ class BbCommand extends Command
                 }
                 //修改上一条
                 $affected = DB::update(
-                    'UPDATE wp_comments SET comment_content = ? WHERE comment_post_ID = ? AND comment_approved = 1 ORDER BY comment_id DESC LIMIT 1',
+                    'UPDATE wp_comments SET comment_content = ? WHERE comment_post_ID = ? AND comment_approved = "1" ORDER BY comment_id DESC LIMIT 1',
                     [$content, $comment_post_ID]
                 );
                 if ($affected) {
@@ -183,7 +183,7 @@ class BbCommand extends Command
                 $this->info('done');
                 $this->line($content);
                 DB::update(
-                    'UPDATE wp_posts SET comment_count =(SELECT COUNT(*) FROM wp_comments WHERE comment_post_ID = ? AND comment_approved = 1) WHERE ID = ?',
+                    'UPDATE wp_posts SET comment_count =(SELECT COUNT(*) FROM wp_comments WHERE comment_post_ID = ? AND comment_approved = "1") WHERE ID = ?',
                     [$comment_post_ID, $comment_post_ID]
                 );
 
