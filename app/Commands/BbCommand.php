@@ -113,7 +113,7 @@ class BbCommand extends Command
                 ->get()
                 ->map(function ($row) {
                     return [
-                        $this->transContent($row->comment_content),
+                        $row->comment_content,
                         $row->comment_ID,
                         Carbon::createFromTimeString($row->comment_date)->diffForHumans(),
                     ];
@@ -125,6 +125,7 @@ class BbCommand extends Command
                 //行间插入空行
                 $showComments = [];
                 foreach ($comments as $key => $item) {
+                    $item[0] = $this->transContent($item[0]);
                     $showComments[] = $item;
                     $showComments[] = ['', '', '',];
                 }
@@ -133,7 +134,7 @@ class BbCommand extends Command
                 $this->table($headers, $showComments); //borderless, 'compact'
             } else {
                 foreach ($comments as $value) {
-                    $this->line('<info>' . $value[1] . '</info>  ' . $value[0] . ' <question>(' . $value[2] . ')</question>');
+                    $this->line('<info>' . $value[1] . '</info>  ' . $this->eolContent($value[0]) . ' <question>(' . $value[2] . ')</question>');
                     $this->line('');
                 }
             }
@@ -206,10 +207,22 @@ class BbCommand extends Command
         //$this->info('Simplicity is the ultimate sophistication.');
     }
 
+    //换行符替换为符号 ↙
     private function transContent($content)
     {
-        $str = str_replace(PHP_EOL, '↙ ', $content); //换行符替换为符号 ↙
+        $str = str_replace(PHP_EOL, '↙ ', $content);
         return Str::limit($str, config('bb.length'));
+    }
+
+    //限定每一行的宽度
+    private function eolContent($content)
+    {
+        $strs = explode(PHP_EOL, $content);
+        $ret = '';
+        foreach ($strs as $value) {
+            $ret.=Str::limit($value, config('bb.length')).PHP_EOL;
+        }
+        return rtrim($ret, PHP_EOL);
     }
 
     private function translateContent($content)

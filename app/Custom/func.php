@@ -1,5 +1,14 @@
 <?php
-//公共函数库
+/*
+ * @Author: daoyu
+ * @Date: 2022-04-09 17:30:27
+ * @LastEditors: daoyu
+ * @LastEditTime: 2022-04-26 17:11:30
+ * @FilePath: \zero_tool\app\Custom\func.php
+ * @Description:公共函数库
+ * Mail mouha@vip.qq.com
+ * Copyright (c) 2022 by phpf5.com, All Rights Reserved.
+ */
 
 /**
  * 判断字符串的组成类别
@@ -24,9 +33,11 @@ function stringType($str)
 }
 
 /**
- * 生成随机码
- *
- * @param $length
+ * @description:生成随机码
+ * @param int $length
+ * @param bool $onlyNumber
+ * @param string $surString
+ * @return string
  */
 function randStr($length = 4, $onlyNumber = false, $surString = '')
 {
