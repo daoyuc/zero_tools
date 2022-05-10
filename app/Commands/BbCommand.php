@@ -2,7 +2,7 @@
 
 namespace App\Commands;
 
-use DB;
+use Illuminate\Support\Facades\DB;
 use LaravelZero\Framework\Commands\Command;
 use Illuminate\Support\Str;
 use App\Handlers\SlugTranslateHandler;
@@ -19,7 +19,16 @@ class BbCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'bb {content?} {--p} {--e} {--c} {--id=} {--t} {--q=} {--f} {--et}';
+    protected $signature = 'bb
+    {content? : The content you want to send (optional)}
+    {--p : Hide content (Only you can see it)}
+    {--e : Edit last content }
+    {--c : Content Count }
+    {--id= : Show content equal to id }
+    {--t : Translate content }
+    {--q= : Filter content like (q) }
+    {--f : Sync content to flomo note}
+    {--et : Add translate to last content and no need content param }';
 
     /**
      * The description of the command.
