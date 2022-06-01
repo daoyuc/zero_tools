@@ -6,3 +6,4 @@
 .env
 /builds
 /database/database.sqlite
+storage
